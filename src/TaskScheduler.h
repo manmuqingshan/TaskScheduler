@@ -1,6 +1,6 @@
 /*
 Cooperative multitasking library for Arduino
-Copyright (c) 2015-2025 Anatoli Arkhipenko
+Copyright (c) 2015-2026 Anatoli Arkhipenko
 
 Changelog:
 v1.0.0:
@@ -307,6 +307,13 @@ v4.0.3:
 v4.0.4:
     2025-11-15:
         - bug: set callbacks should not be available for _TASK_OO_CALLBACKS mode
+
+v4.0.5:
+    2026-04-16:
+        - bug fix: use-after-free in Scheduler::execute() when a callback destroys
+          the next task in the chain (e.g. painlessMesh BufferedConnection teardown).
+          Promoted nextTask to scheduler member iNextExecute so deleteTask() can
+          advance it before the memory is freed.
 */
 
 #include "TaskSchedulerDeclarations.h"
@@ -1023,6 +1030,7 @@ void Scheduler::init() {
     iFirst = NULL;
     iLast = NULL;
     iCurrent = NULL;
+    iNextExecute = NULL;
 
     iPaused = false;
 
@@ -1076,10 +1084,15 @@ void Scheduler::init() {
  */
 void Scheduler::deleteTask(Task& aTask) {
 // Can only delete own tasks
-    if (aTask.iScheduler != this) 
+    if (aTask.iScheduler != this)
         return;
-    
+
     iEnabled = false;
+
+    // If execute() is mid-iteration and this task is next in line,
+    // advance the pointer before we unlink and the memory is freed.
+    if (iNextExecute == &aTask)
+        iNextExecute = aTask.iNext;
 
     aTask.iScheduler = NULL;
     if (aTask.iPrev == NULL) {
@@ -1549,7 +1562,6 @@ bool Scheduler::execute() {
 #endif  // _TASK_SLEEP_ON_IDLE_RUN
 
 
-    Task *nextTask;     // support for deleting the task in the onDisable method
     iCurrent = iFirst;
 
     iActiveTasks = 0;
@@ -1605,7 +1617,7 @@ bool Scheduler::execute() {
         if (iHighPriority) idleRun = iHighPriority->execute() && idleRun;
         iCurrentScheduler = this;
 #endif  // _TASK_PRIORITY
-        nextTask = iCurrent->iNext;
+        iNextExecute = iCurrent->iNext;
         do {
             if ( iCurrent->iStatus.enabled ) {
                 iActiveTasks++;
@@ -1763,7 +1775,7 @@ bool Scheduler::execute() {
 #endif  //  #ifdef _TASK_SELF_DESTRUCT
         } while (0);    //guaranteed single run - allows use of "break" to exit
 
-        iCurrent = nextTask;
+        iCurrent = iNextExecute;
         
 #ifdef _TASK_TIMECRITICAL
         iCPUCycle += ( (_task_micros() - tPassStart) - (tTaskFinish - tTaskStart) );

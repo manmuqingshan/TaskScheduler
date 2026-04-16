@@ -1,6 +1,6 @@
 # Task Scheduler
 ### Cooperative multitasking for Arduino, ESPx, STM32 and other microcontrollers
-#### Version 4.0.4: 2026-01-16 [Latest updates](https://github.com/arkhipenko/TaskScheduler/wiki/Latest-Updates)
+#### Version 4.0.5: 2026-04-16 [Latest updates](https://github.com/arkhipenko/TaskScheduler/wiki/Latest-Updates)
 
 [![arduino-library-badge](https://www.ardu-badge.com/badge/TaskScheduler.svg?)](https://www.ardu-badge.com/TaskScheduler)
 

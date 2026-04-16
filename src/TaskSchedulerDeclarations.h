@@ -2,9 +2,9 @@
  * @file TaskSchedulerDeclarations.h
  * @brief Cooperative multitasking library for Arduino microcontrollers
  * @author Anatoli Arkhipenko
- * @version 4.0.2
- * @date 2015-2025
- * @copyright Copyright (c) 2015-2025 Anatoli Arkhipenko
+ * @version 4.0.5
+ * @date 2015-2026
+ * @copyright Copyright (c) 2015-2026 Anatoli Arkhipenko
  *
  * @details A lightweight implementation of cooperative multitasking (task scheduling) supporting:
  * - Periodic task execution, with dynamic execution period in milliseconds (default) or microseconds
@@ -3066,7 +3066,7 @@ class Scheduler {
 #ifdef _TASK_THREAD_SAFE
     __TASK_INLINE void   processRequests();
 #endif
-    Task          *iFirst, *iLast, *iCurrent;        // pointers to first, last and current tasks in the chain
+    Task          *iFirst, *iLast, *iCurrent, *iNextExecute;  // pointers to first, last, current and next-to-execute tasks in the chain
 
     volatile bool iPaused, iEnabled;
     unsigned long iActiveTasks;
