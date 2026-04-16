@@ -97,6 +97,28 @@ There is no such thing as enough testing. If you come up with another test scena
 
 
 
+### Powering painlessMesh and ESP32 Mesh Networking
+
+TaskScheduler is a core dependency of [painlessMesh](https://gitlab.com/painlessMesh/painlessMesh) -- the widely adopted ESP8266/ESP32 mesh networking library. painlessMesh uses TaskScheduler internally to manage node discovery, connection maintenance, message routing, and mesh self-healing, all running cooperatively within a single `loop()` call.
+
+This pairing of TaskScheduler + painlessMesh has been deployed across a range of real-world applications:
+
+**Academic and industrial research:**
+
+* **Air quality monitoring networks** -- Indoor/outdoor sensor mesh networks using ESP32 nodes with CO2, PM2.5, temperature, and humidity sensors, deployed across campus-scale areas (100m x 80m) and running continuously for days ([Sustainability, 2022](https://www.mdpi.com/2071-1050/14/24/16630))
+* **Cold chain monitoring for perishable goods** -- PrunusPos project evaluating ESP8266 mesh testbeds for monitoring ambient conditions inside fruit and vegetable storage containers, with sensors integrated directly into transport crates ([Information, 2022](https://www.mdpi.com/2078-2489/13/5/210))
+* **Mesh network performance evaluation** -- Multiple peer-reviewed papers benchmarking painlessMesh delivery delay, throughput, and scalability with varying node counts and payload sizes ([Yoppy et al., 2019](https://www.researchgate.net/publication/335656647_Performance_Evaluation_of_ESP8266_Mesh_Networks))
+
+**Community and maker projects:**
+
+* **Synchronized LED installations** -- WiFi mesh-synchronized NeoPixel LED bars with coordinated animations across multiple nodes, no data wires required ([Instructables](https://www.instructables.com/WiFi-Mesh-Synchronized-LED-Bars/))
+* **MeshyMcLighting** -- Standalone mesh-networked NeoPixel lighting system broadcasting state across nodes without internet connectivity ([MeshyMcLighting](https://sites.lsa.umich.edu/debsahu/2018/05/20/meshymclighting-neopixels-lighting-solution-using-mesh-network/))
+* **MQTT-to-Mesh gateways** -- Bridging painlessMesh IoT networks to MQTT brokers for cloud integration ([painlessMeshMqttGateway](https://github.com/latonita/painlessMeshMqttGateway))
+* **Woodshop dust collector control** -- Distributed blast gate control across a workshop using mesh-networked ESP nodes
+* **Smart agriculture and irrigation** -- Distributed soil moisture, temperature, and water flow monitoring across fields with a gateway node forwarding to cloud dashboards
+* **Emergency/disaster communication** -- Pre-deployed ESP32 mesh networks that continue relaying status messages (water levels, power outages) when internet infrastructure is down
+
+
 ### Check out what TaskScheduler can do:
 
 #### A picture is worth 1024 words:
@@ -116,8 +138,10 @@ There is no such thing as enough testing. If you come up with another test scena
   https://xie.infoq.cn/article/0f27dbbebcc2b99b35132b262
 * WEMOS D1 Mini로 Ad-hoc WIFI network
   https://m.blog.naver.com/sonyi/221330334326
-* [3 Devo](http://3devo.eu/) - Quality 3D printing filament, now made accessible and affordable
-(http://3devo.eu/license-information/)
+* [3devo](https://www.3devo.com/) - Commercial polymer processing and 3D printing filament production systems. TaskScheduler runs in the firmware of their entire product line:
+  Filament Maker ONE, Filament Maker TWO, GP20 Shredder Hybrid, and Airid Polymer Dryer.
+  Each product's [license page](https://support.3devo.com/license-information) credits TaskScheduler (BSD3, Anatoli Arkhipenko).
+  Open-source firmware at [github.com/3devo](https://github.com/3devo).
 
 
 * [Houston midi](https://github.com/chaffneue/houston) clock project - TaskScheduler with microseconds resolution
