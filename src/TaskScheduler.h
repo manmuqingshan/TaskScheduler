@@ -340,6 +340,17 @@ v4.0.7:
         - feature: added getChainLength() method to Scheduler -- returns the number
           of tasks in the chain at any time, without requiring an execute() pass.
           Maintained via O(1) counter in addTask/deleteTask.
+
+v4.0.8:
+    2026-04-20:
+        - bug fix: Scheduler::currentTask() failed to compile under _TASK_OO_CALLBACKS
+          because the static Task sDummy sentinel introduced in v4.0.7 cannot be
+          instantiated (Task is abstract when OO callbacks are enabled -- Callback()
+          is pure virtual). Replaced with a local concrete subclass that stubs out
+          Callback() in OO mode; function-pointer mode path is unchanged.
+        - example: Scheduler_example21_OO_Callbacks -- silenced signed/unsigned
+          compare warning in SuperSensor::measurementReady() by casting iDelay to
+          unsigned long.
 */
 
 #include "TaskSchedulerDeclarations.h"
@@ -1290,7 +1301,17 @@ long Scheduler::timeUntilNextIteration(Task& aTask) {
 // DEPRECATED: Unsafe outside task callbacks (iCurrent may be NULL).
 // Use getCurrentTask() instead, which returns a pointer (NULL-safe).
 Task& Scheduler::currentTask() {
+#ifdef _TASK_OO_CALLBACKS
+    // Task is abstract in OO mode (Callback() is pure virtual), so the
+    // sentinel needs a concrete subclass that stubs it out.
+    struct _DummyTask : public Task {
+        _DummyTask() : Task() {}
+        bool Callback() { return false; }
+    };
+    static _DummyTask sDummy;
+#else
     static Task sDummy;
+#endif
     return iCurrent ? *iCurrent : sDummy;
 }
 Task* Scheduler::getCurrentTask() { return iCurrent; }

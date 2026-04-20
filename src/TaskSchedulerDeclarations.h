@@ -2,7 +2,7 @@
  * @file TaskSchedulerDeclarations.h
  * @brief Cooperative multitasking library for Arduino microcontrollers
  * @author Anatoli Arkhipenko
- * @version 4.0.7
+ * @version 4.0.8
  * @date 2015-2026
  * @copyright Copyright (c) 2015-2026 Anatoli Arkhipenko
  *
